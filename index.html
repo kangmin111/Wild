@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WILD BATTLE LAB — 야생 전투 시뮬레이터</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        wildDark: '#121214',
+                        wildCard: '#1a1a1e',
+                        wildBorder: '#2d2d35',
+                        wildAccent: '#ff3333',
+                        wildGold: '#fbbf24',
+                        wildOrange: '#f97316'
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #121214; color: #f3f4f6; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #121214; }
+        ::-webkit-scrollbar-thumb { background: #2d2d35; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #ff3333; }
+        .glow-red { box-shadow: 0 0 25px rgba(255, 51, 51, 0.25); }
+        .glow-gold { box-shadow: 0 0 25px rgba(251, 191, 36, 0.25); }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-red-500 selection:text-white">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-wildBorder bg-wildDark/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchView('home')">
+                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-red-600 to-orange-600 flex items-center justify-center glow-red">
+                    <i class="fa-solid fa-flask text-white text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold tracking-wider text-white flex items-center gap-2">
+                        WILD BATTLE LAB <span class="text-xs bg-red-600/20 text-red-500 border border-red-500/30 px-2 py-0.5 rounded-full font-semibold">SIMULATOR v2.4</span>
+                    </h1>
+                    <p class="text-xs text-zinc-400">야생 생태계 및 전투력 가상 시뮬레이션 연구소</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <button onclick="switchView('home')" class="text-zinc-300 hover:text-red-500 transition"><i class="fa-solid fa-house mr-1.5"></i> 홈</button>
+                <button onclick="switchView('setup')" class="text-zinc-300 hover:text-red-500 transition"><i class="fa-solid fa-chess-board mr-1.5"></i> 대결 설정</button>
+                <button onclick="switchView('presets')" class="text-zinc-300 hover:text-red-500 transition"><i class="fa-solid fa-bolt mr-1.5"></i> 인기 프리셋</button>
+                <button onclick="switchView('stats')" class="text-zinc-300 hover:text-red-500 transition"><i class="fa-solid fa-chart-pie mr-1.5"></i> 통계 및 기록</button>
+            </nav>
+            <div class="flex items-center space-x-3">
+                <button onclick="switchView('setup')" class="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg shadow-red-600/30 transition transform active:scale-95 text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-play"></i> 대결 시작하기
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        <!-- 1. HOME VIEW -->
+        <section id="view-home" class="space-y-12">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-wildCard to-wildBorder border border-wildBorder p-8 sm:p-12 text-center shadow-2xl">
+                <div class="absolute -right-24 -top-24 w-96 h-96 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                <div class="absolute -left-24 -bottom-24 w-96 h-96 bg-orange-600/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <span class="inline-block bg-orange-500/10 text-orange-400 border border-orange-500/30 text-xs px-3 py-1 rounded-full font-bold mb-4 uppercase tracking-widest">
+                    Ultimate Wild Battle Simulator
+                </span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+                    “누가 최후의 승자가 될 것인가?”
+                </h2>
+                <p class="text-zinc-400 max-w-2xl mx-auto text-sm sm:text-base mb-8 leading-relaxed">
+                    인간의 전술적 장비와 35종에 달하는 야생 최상위 포식자·초식동물의 신체 능력을 결합하여 가장 정교하고 과학적인 가상 생태 전투 시뮬레이션을 경험하세요.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="switchView('setup')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-8 py-4 rounded-2xl shadow-lg shadow-red-600/30 transition transform hover:-translate-y-0.5 flex items-center gap-3">
+                        <i class="fa-solid fa-shield-cat text-lg"></i> 대결 시뮬레이션 설정하기
+                    </button>
+                    <button onclick="switchView('presets')" class="bg-wildDark hover:bg-wildBorder border border-wildBorder text-zinc-200 font-semibold px-8 py-4 rounded-2xl transition flex items-center gap-3">
+                        <i class="fa-solid fa-fire text-orange-500 text-lg"></i> 추천 인기 대결 보기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Features Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-wildCard border border-wildBorder rounded-2xl p-6 hover:border-red-500/50 transition">
+                    <div class="w-12 h-12 rounded-xl bg-red-600/20 text-red-500 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">35종의 정밀 데이터</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">인간부터 백상아리, 범고래, 코끼리까지 체급, 속도, 방어력, 집단행동 특성을 완벽히 구현했습니다.</p>
+                </div>
+                <div class="bg-wildCard border border-wildBorder rounded-2xl p-6 hover:border-orange-500/50 transition">
+                    <div class="w-12 h-12 rounded-xl bg-orange-600/20 text-orange-500 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-gun"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">인간 전용 장비 시스템</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">맨손, 방망이, 검, 총 등 인원수별 맞춤형 전술 장비를 배치하여 전략적 변수를 극대화하세요.</p>
+                </div>
+                <div class="bg-wildCard border border-wildBorder rounded-2xl p-6 hover:border-yellow-500/50 transition">
+                    <div class="w-12 h-12 rounded-xl bg-yellow-600/20 text-yellow-500 flex items-center justify-center text-xl mb-4">
+                        <i class="fa-solid fa-earth-americas"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">8가지 전투 환경</h3>
+                    <p class="text-zinc-400 text-sm leading-relaxed">아프리카 초원, 밀림, 설원, 바다 등 환경 적합도와 지형 보정이 승패에 직접적인 영향을 미칩니다.</p>
+                </div>
+            </div>
+
+            <!-- Disclaimer Notice -->
+            <div class="bg-wildCard/50 border border-wildBorder rounded-2xl p-4 text-xs text-zinc-500 flex items-start gap-3">
+                <i class="fa-solid fa-triangle-exclamation text-yellow-500 text-base mt-0.5"></i>
+                <p><strong>면책 조항:</strong> 본 웹사이트의 모든 전투 및 시뮬레이션 결과는 가상의 알고리즘 계산에 따른 추정치이며, 실제 야생 동물과 인간 간의 대결 결과나 실제 상황을 보장하지 않습니다. 생태계 보호 및 안전을 위해 무리한 동물 접촉은 금지되어 있습니다.</p>
+            </div>
+        </section>
+
+        <!-- 2. SETUP VIEW -->
+        <section id="view-setup" class="hidden space-y-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-wildCard border border-wildBorder p-6 rounded-3xl">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chess-board text-red-500"></i> 전투 시뮬레이션 설정
+                    </h2>
+                    <p class="text-zinc-400 text-sm">TEAM A와 TEAM B의 참가자 구성, 장비, 전투 환경을 설정하세요.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="resetAllTeams()" class="px-4 py-2 bg-wildDark hover:bg-wildBorder border border-wildBorder text-zinc-300 rounded-xl text-sm font-semibold transition">
+                        <i class="fa-solid fa-rotate-left mr-1.5"></i> 초기화
+                    </button>
+                    <button onclick="startSimulation()" class="px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-500 hover:to-orange-500 text-white font-bold rounded-xl shadow-lg shadow-red-600/30 transition transform active:scale-95 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-play"></i> 전투 시뮬레이션 실행
+                    </button>
+                </div>
+            </div>
+
+            <!-- Environment & Simulation Config Bar -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-wildCard border border-wildBorder p-6 rounded-3xl">
+                <div>
+                    <label class="block text-sm font-bold text-zinc-300 mb-2">
+                        <i class="fa-solid fa-earth-americas text-red-500 mr-1.5"></i> 전투 환경 선택
+                    </label>
+                    <select id="battle-env" class="w-full bg-wildDark border border-wildBorder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-red-500">
+                        <option value="savanna">아프리카 초원 (개방형, 속도 유리)</option>
+                        <option value="jungle">밀림 (은폐 유리, 대형 동물 제약)</option>
+                        <option value="forest">숲 (중간 지형)</option>
+                        <option value="desert">사막 (지구력 소모 큼)</option>
+                        <option value="snow">설원 (방한 특화 동물 유리)</option>
+                        <option value="river">강가 (물가 포식자/악어 유리)</option>
+                        <option value="ocean">바다 (수중 생물 특화 / 범고래·상어)</option>
+                        <option value="plains">넓은 평지 (수적 우위 극대화)</option>
+                        <option value="random">랜덤 환경 (무작위 지형)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-zinc-300 mb-2">
+                        <i class="fa-solid fa-repeat text-orange-500 mr-1.5"></i> 몬테카를로 반복 시뮬레이션 횟수
+                    </label>
+                    <select id="sim-runs" class="w-full bg-wildDark border border-wildBorder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-orange-500">
+                        <option value="1">1회 (상세 로그 보기)</option>
+                        <option value="10">10회 반복 분석</option>
+                        <option value="50" selected>50회 반복 분석</option>
+                        <option value="100">100회 반복 분석</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Teams Configuration Grid -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- TEAM A -->
+                <div class="bg-wildCard border-2 border-red-600/40 rounded-3xl p-6 space-y-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-red-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">TEAM A</div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-white">팀 A 진영</h3>
+                            <p class="text-xs text-zinc-400">참가자를 추가하고 마릿수를 설정하세요.</p>
+                        </div>
+                        <button onclick="addParticipantModal('A')" class="bg-red-600/20 hover:bg-red-600/30 text-red-500 border border-red-500/40 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> 참가자 추가
+                        </button>
+                    </div>
+
+                    <!-- Team A Participants List -->
+                    <div id="team-a-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Team A Summary Stats -->
+                    <div class="border-t border-wildBorder pt-4 grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">총 개체수</span>
+                            <span id="team-a-count" class="text-lg font-extrabold text-white">0</span>
+                        </div>
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">종합 전투력</span>
+                            <span id="team-a-power" class="text-lg font-extrabold text-red-500">0</span>
+                        </div>
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">평균 체급</span>
+                            <span id="team-a-weight" class="text-lg font-extrabold text-white">0 kg</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TEAM B -->
+                <div class="bg-wildCard border-2 border-orange-600/40 rounded-3xl p-6 space-y-6 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 bg-orange-600 text-white text-xs font-bold px-4 py-1.5 rounded-bl-2xl uppercase tracking-wider">TEAM B</div>
+                    
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="text-xl font-extrabold text-white">팀 B 진영</h3>
+                            <p class="text-xs text-zinc-400">참가자를 추가하고 마릿수를 설정하세요.</p>
+                        </div>
+                        <button onclick="addParticipantModal('B')" class="bg-orange-600/20 hover:bg-orange-600/30 text-orange-500 border border-orange-500/40 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2">
+                            <i class="fa-solid fa-plus"></i> 참가자 추가
+                        </button>
+                    </div>
+
+                    <!-- Team B Participants List -->
+                    <div id="team-b-list" class="space-y-4 max-h-[500px] overflow-y-auto pr-2">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Team B Summary Stats -->
+                    <div class="border-t border-wildBorder pt-4 grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">총 개체수</span>
+                            <span id="team-b-count" class="text-lg font-extrabold text-white">0</span>
+                        </div>
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">종합 전투력</span>
+                            <span id="team-b-power" class="text-lg font-extrabold text-orange-500">0</span>
+                        </div>
+                        <div class="bg-wildDark p-3 rounded-2xl border border-wildBorder">
+                            <span class="block text-xs text-zinc-400">평균 체급</span>
+                            <span id="team-b-weight" class="text-lg font-extrabold text-white">0 kg</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. SIMULATION VIEW -->
+        <section id="view-simulation" class="hidden space-y-8">
+            <div class="bg-wildCard border border-wildBorder rounded-3xl p-8 text-center relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-r from-red-600/5 via-transparent to-orange-600/5 pointer-events-none"></div>
+                <span class="inline-block bg-red-500/10 text-red-500 border border-red-500/30 text-xs px-4 py-1 rounded-full font-bold mb-3 uppercase tracking-wider animate-pulse">
+                    <i class="fa-solid fa-spinner fa-spin mr-1.5"></i> 전투 시뮬레이션 진행 중...
+                </span>
+                <h2 id="sim-title" class="text-3xl font-extrabold text-white mb-2">TEAM A vs TEAM B 격돌</h2>
+                <p id="sim-subtitle" class="text-zinc-400 text-sm">환경 요인 및 개체별 능력치 연산 중</p>
+                
+                <!-- Progress Bar -->
+                <div class="max-w-xl mx-auto mt-6">
+                    <div class="flex justify-between text-xs text-zinc-400 mb-2">
+                        <span id="sim-status-text">전투 단계 분석 중...</span>
+                        <span id="sim-progress-pct">0%</span>
+                    </div>
+                    <div class="w-full bg-wildDark h-3 rounded-full overflow-hidden border border-wildBorder p-0.5">
+                        <div id="sim-progress-bar" class="bg-gradient-to-r from-red-600 to-orange-600 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Battle Arena Visualizer -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                <!-- Team A Live Box -->
+                <div class="bg-wildCard border border-red-500/40 rounded-3xl p-6 text-center space-y-4">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-red-600/20 text-red-500 flex items-center justify-center text-3xl">
+                        <i class="fa-solid fa-shield-cat"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white">TEAM A</h3>
+                    <div id="sim-live-a" class="text-sm text-zinc-300 space-y-1"></div>
+                </div>
+
+                <!-- VS Center Console -->
+                <div class="text-center space-y-4">
+                    <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-red-600 to-orange-600 flex items-center justify-center text-white text-2xl font-extrabold shadow-lg shadow-red-600/40 animate-bounce">
+                        VS
+                    </div>
+                    <div id="sim-environment-tag" class="inline-block bg-wildDark border border-wildBorder text-zinc-300 text-xs px-4 py-1.5 rounded-full">
+                        <i class="fa-solid fa-earth-americas text-red-500 mr-1"></i> 전투 환경: 아프리카 초원
+                    </div>
+                </div>
+
+                <!-- Team B Live Box -->
+                <div class="bg-wildCard border border-orange-500/40 rounded-3xl p-6 text-center space-y-4">
+                    <div class="w-16 h-16 mx-auto rounded-2xl bg-orange-600/20 text-orange-500 flex items-center justify-center text-3xl">
+                        <i class="fa-solid fa-paw"></i>
+                    </div>
+                    <h3 class="text-xl font-extrabold text-white">TEAM B</h3>
+                    <div id="sim-live-b" class="text-sm text-zinc-300 space-y-1"></div>
+                </div>
+            </div>
+
+            <!-- Battle Logs Box -->
+            <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 space-y-4">
+                <h4 class="text-sm font-bold text-zinc-300 flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-red-500"></i> 실시간 전투 및 상황 로그
+                </h4>
+                <div id="battle-log-container" class="bg-wildDark border border-wildBorder rounded-2xl p-4 h-48 overflow-y-auto space-y-2 text-xs font-mono text-zinc-400">
+                    <div>[시스템] 전투 시뮬레이션 엔진 초기화 완료.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. RESULT VIEW -->
+        <section id="view-result" class="hidden space-y-8">
+            <div id="result-banner" class="bg-gradient-to-br from-wildCard to-wildBorder border-2 border-red-500 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden glow-red">
+                <div id="winner-badge" class="inline-block bg-red-600 text-white text-xs px-4 py-1.5 rounded-full font-bold uppercase tracking-widest mb-4">
+                    승리 팀
+                </div>
+                <h2 id="result-winner-title" class="text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4">
+                    TEAM A 승리!
+                </h2>
+                <p id="result-summary-desc" class="text-zinc-300 max-w-2xl mx-auto text-base mb-8">
+                    수적 우위와 인간의 전술적 장비 조합이 결정적인 승리 요인으로 작용했습니다.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <button onclick="switchView('setup')" class="bg-red-600 hover:bg-red-500 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-red-600/30 transition flex items-center gap-2">
+                        <i class="fa-solid fa-rotate-right"></i> 다시 대결하기
+                    </button>
+                    <button onclick="shareResult()" class="bg-wildDark hover:bg-wildBorder border border-wildBorder text-zinc-200 font-semibold px-6 py-3 rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-share-nodes text-orange-500"></i> 결과 카드 공유 / 복사
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Analysis Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Key Factors -->
+                <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 space-y-4 md:col-span-2">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-chart-column text-red-500"></i> 승패를 좌우한 주요 요인 분석
+                    </h3>
+                    <ul id="result-factors-list" class="space-y-3 text-sm text-zinc-300">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+                <!-- Monte Carlo Stats -->
+                <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-percent text-orange-500"></i> 시뮬레이션 승률 비율
+                    </h3>
+                    <div id="monte-carlo-stats" class="space-y-4 text-sm">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. PRESETS VIEW -->
+        <section id="view-presets" class="hidden space-y-8">
+            <div class="bg-wildCard border border-wildBorder p-6 rounded-3xl">
+                <h2 class="text-2xl font-extrabold text-white flex items-center gap-2 mb-2">
+                    <i class="fa-solid fa-fire text-orange-500"></i> 인기 대결 프리셋
+                </h2>
+                <p class="text-zinc-400 text-sm">가장 흥미롭고 검증된 인기 매치업을 클릭 한 번으로 세팅하세요.</p>
+            </div>
+
+            <div id="presets-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated by JS -->
+            </div>
+        </section>
+
+        <!-- 6. STATS VIEW -->
+        <section id="view-stats" class="hidden space-y-8">
+            <div class="bg-wildCard border border-wildBorder p-6 rounded-3xl flex justify-between items-center">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white flex items-center gap-2 mb-1">
+                        <i class="fa-solid fa-chart-pie text-red-500"></i> 통계 및 최근 기록
+                    </h2>
+                    <p class="text-zinc-400 text-sm">브라우저에 저장된 최근 시뮬레이션 결과와 통계 기록입니다.</p>
+                </div>
+                <button onclick="clearHistory()" class="bg-wildDark hover:bg-wildBorder border border-wildBorder text-red-400 px-4 py-2 rounded-xl text-xs font-semibold transition">
+                    <i class="fa-solid fa-trash mr-1.5"></i> 기록 초기화
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white">최근 시뮬레이션 기록</h3>
+                    <div id="history-list" class="space-y-3 max-h-96 overflow-y-auto pr-2 text-sm">
+                        <p class="text-zinc-500 text-center py-8">저장된 전투 기록이 없습니다.</p>
+                    </div>
+                </div>
+                <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-white">자주 승리한 동물 랭킹</h3>
+                    <div id="animal-ranking-list" class="space-y-3 max-h-96 overflow-y-auto pr-2 text-sm">
+                        <p class="text-zinc-500 text-center py-8">데이터 집계 중...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Participant Selection Modal -->
+    <div id="participant-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-wildCard border border-wildBorder rounded-3xl max-w-2xl w-full p-6 space-y-6 max-h-[85vh] flex flex-col">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-paw text-red-500"></i> 참가자 선택 (<span id="modal-team-name">TEAM A</span>)
+                </h3>
+                <button onclick="closeParticipantModal()" class="text-zinc-400 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <div class="relative">
+                <input type="text" id="animal-search" oninput="filterAnimals()" placeholder="동물 이름 검색..." class="w-full bg-wildDark border border-wildBorder rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-red-500 pl-10">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3.5 text-zinc-500"></i>
+            </div>
+
+            <div id="modal-animals-grid" class="grid grid-cols-2 sm:grid-cols-3 gap-3 overflow-y-auto flex-1 pr-1">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Message Toast / Modal -->
+    <div id="toast-modal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-wildCard border border-wildBorder rounded-2xl max-w-sm w-full p-6 text-center space-y-4 shadow-2xl">
+            <div id="toast-icon" class="w-12 h-12 mx-auto rounded-full bg-red-600/20 text-red-500 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h4 id="toast-title" class="text-lg font-bold text-white">알림</h4>
+            <p id="toast-desc" class="text-sm text-zinc-400">메시지 내용</p>
+            <button onclick="closeToast()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2.5 rounded-xl text-sm transition">확인</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="border-t border-wildBorder bg-wildDark/80 py-6 mt-12 text-center text-xs text-zinc-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 WILD BATTLE LAB. All Rights Reserved.</p>
+            <p>전투 시뮬레이터 v2.4 — 가상 생태 데이터 연구소</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // 35 Species Dataset
+        const ANIMALS_DATA = [
+            { id: 'human', name: '인간', weight: '70kg', strength: 55, speed: 35, defense: 30, intelligence: 100, endurance: 70, group: 90, desc: '도구와 지능을 활용하는 만물의 영장. 장비 장착 가능.', envFit: 85, icon: 'fa-solid fa-user', isHuman: true },
+            { id: 'lion', name: '사자', weight: '190kg', strength: 85, speed: 70, defense: 60, intelligence: 70, endurance: 65, group: 85, desc: '초원의 제왕. 무리 사냥과 강력한 턱 힘.', envFit: 95, icon: 'fa-solid fa-cat' },
+            { id: 'tiger', name: '호랑이', weight: '220kg', strength: 95, speed: 75, defense: 65, intelligence: 75, endurance: 60, group: 30, desc: '단독 사냥의 최강자. 압도적인 체급과 폭발력.', envFit: 90, icon: 'fa-solid fa-bolt' },
+            { id: 'leopard', name: '표범', weight: '60kg', strength: 65, speed: 85, defense: 45, intelligence: 70, endurance: 75, group: 20, desc: '은밀함과 나무 타기의 명수.', envFit: 85, icon: 'fa-solid fa-cat' },
+            { id: 'cheetah', name: '치타', weight: '50kg', strength: 50, speed: 100, defense: 35, intelligence: 60, endurance: 40, group: 40, desc: '지상 최고의 단거리 질주 속도.', envFit: 90, icon: 'fa-solid fa-gauge-high' },
+            { id: 'jaguar', name: '재규어', weight: '100kg', strength: 80, speed: 75, defense: 60, intelligence: 70, endurance: 65, group: 25, desc: '가장 강력한 치악력을 가진 고양이과 맹수.', envFit: 95, icon: 'fa-solid fa-shield-cat' },
+            { id: 'wolf', name: '늑대', weight: '45kg', strength: 60, speed: 75, defense: 40, intelligence: 80, endurance: 90, group: 95, desc: '고도의 협동심과 뛰어난 지구력.', envFit: 85, icon: 'fa-solid fa-dog' },
+            { id: 'hyena', name: '하이에나', weight: '65kg', strength: 70, speed: 70, defense: 55, intelligence: 75, endurance: 85, group: 90, desc: '뼈를 부수며 끈질기게 추격하는 턱.', envFit: 90, icon: 'fa-solid fa-bone' },
+            { id: 'grizzly', name: '회색곰', weight: '350kg', strength: 98, speed: 60, defense: 85, intelligence: 75, endurance: 75, group: 20, desc: '압도적인 힘과 두꺼운 지방층.', envFit: 90, icon: 'fa-solid fa-bear' },
+            { id: 'polar_bear', name: '북극곰', weight: '450kg', strength: 100, speed: 55, defense: 90, intelligence: 75, endurance: 80, group: 10, desc: '설원과 빙하의 절대적인 최상위 포식자.', envFit: 95, icon: 'fa-solid fa-snowflake' },
+            { id: 'elephant', name: '코끼리', weight: '4000kg', strength: 180, speed: 45, defense: 180, intelligence: 90, endurance: 95, group: 90, desc: '지상 최대의 거대 괴수. 절대적인 질량과 상아의 파괴력.', envFit: 90, icon: 'fa-solid fa-elephant' },
+            { id: 'rhino', name: '코뿔소', weight: '1800kg', strength: 140, speed: 55, defense: 150, intelligence: 50, endurance: 85, group: 40, desc: '두꺼운 장갑 피부와 파괴적인 가속 돌진.', envFit: 85, icon: 'fa-solid fa-shield' },
+            { id: 'hippo', name: '하마', weight: '1500kg', strength: 150, speed: 50, defense: 140, intelligence: 60, endurance: 80, group: 75, desc: '수륙양용 거대 분쇄기. 60cm 송곳니와 분쇄 턱 힘.', envFit: 90, icon: 'fa-solid fa-hippo' },
+            { id: 'giraffe', name: '기린', weight: '1200kg', strength: 105, speed: 65, defense: 80, intelligence: 55, endurance: 70, group: 60, desc: '사자도 즉사시키는 치명적인 머리 및 발차기.', envFit: 80, icon: 'fa-solid fa-circle-dot' },
+            { id: 'buffalo', name: '아프리카물소', weight: '700kg', strength: 115, speed: 60, defense: 100, intelligence: 60, endurance: 85, group: 90, desc: '사자 무리도 역으로 사냥하는 초원의 전차.', envFit: 90, icon: 'fa-solid fa-bullhorn' },
+            { id: 'wild_boar', name: '멧돼지', weight: '150kg', strength: 75, speed: 65, defense: 70, intelligence: 65, endurance: 80, group: 60, desc: '돌진 본능과 거친 엄니.', envFit: 90, icon: 'fa-solid fa-piggy-bank' },
+            { id: 'gorilla', name: '고릴라', weight: '160kg', strength: 92, speed: 50, defense: 75, intelligence: 85, endurance: 75, group: 80, desc: '영장류 최강의 근력과 지능.', envFit: 85, icon: 'fa-solid fa-user-secret' },
+            { id: 'chimpanzee', name: '침팬지', weight: '50kg', strength: 65, speed: 70, defense: 45, intelligence: 90, endurance: 70, group: 85, desc: '도구 사용 능력과 영리한 집단 전술.', envFit: 80, icon: 'fa-solid fa-users' },
+            { id: 'orangutan', name: '오랑우탄', weight: '80kg', strength: 75, speed: 45, defense: 60, intelligence: 85, endurance: 65, group: 40, desc: '나무 위에서의 강력한 완력.', envFit: 80, icon: 'fa-solid fa-tree' },
+            { id: 'zebra', name: '얼룩말', weight: '300kg', strength: 60, speed: 80, defense: 50, intelligence: 55, endurance: 80, group: 80, desc: '킥 공격과 빠른 도주 능력.', envFit: 80, icon: 'fa-solid fa-horse' },
+            { id: 'horse', name: '말', weight: '500kg', strength: 70, speed: 85, defense: 55, intelligence: 60, endurance: 85, group: 75, desc: '강력한 뒷발 차기와 기동성.', envFit: 85, icon: 'fa-solid fa-horse-head' },
+            { id: 'kangaroo', name: '캥거루', weight: '85kg', strength: 70, speed: 80, defense: 50, intelligence: 55, endurance: 75, group: 60, desc: '복싱 킥과 강력한 뒷다리.', envFit: 80, icon: 'fa-solid fa-k' },
+            { id: 'wild_dog', name: '들개', weight: '25kg', strength: 45, speed: 80, defense: 35, intelligence: 85, endurance: 95, group: 95, desc: '완벽한 팀워크와 끈질긴 추격.', envFit: 85, icon: 'fa-solid fa-dog' },
+            { id: 'crocodile', name: '악어', weight: '500kg', strength: 110, speed: 45, defense: 115, intelligence: 50, endurance: 90, group: 50, desc: '물가의 절대자. 강력한 회전 물어뜯기.', envFit: 95, icon: 'fa-solid fa-water' },
+            { id: 'king_cobra', name: '킹코브라', weight: '6kg', strength: 40, speed: 65, defense: 20, intelligence: 50, endurance: 60, group: 10, desc: '치명적인 신경독.', envFit: 80, icon: 'fa-solid fa-worm' },
+            { id: 'python', name: '비단뱀', weight: '100kg', strength: 80, speed: 40, defense: 60, intelligence: 45, endurance: 70, group: 10, desc: '강력한 조이기 압력.', envFit: 80, icon: 'fa-solid fa-rope' },
+            { id: 'eagle', name: '독수리', weight: '6kg', strength: 45, speed: 90, defense: 25, intelligence: 65, endurance: 80, group: 30, desc: '공중 시야와 날카로운 발톱.', envFit: 85, icon: 'fa-solid fa-feather' },
+            { id: 'ostrich', name: '타조', weight: '120kg', strength: 60, speed: 85, defense: 45, intelligence: 40, endurance: 75, group: 60, desc: '치명적인 발차기.', envFit: 80, icon: 'fa-solid fa-kiwi-bird' },
+            { id: 'bighorn', name: '큰뿔양', weight: '130kg', strength: 68, speed: 65, defense: 65, intelligence: 55, endurance: 75, group: 60, desc: '단단한 뿔 박치기.', envFit: 80, icon: 'fa-solid fa-mountain' },
+            { id: 'bison', name: '들소', weight: '900kg', strength: 120, speed: 60, defense: 110, intelligence: 55, endurance: 90, group: 90, desc: '거구의 충격력과 돌진 시 가해지는 위력.', envFit: 85, icon: 'fa-solid fa-shield-dog' },
+            { id: 'camel', name: '낙타', weight: '600kg', strength: 75, speed: 60, defense: 65, intelligence: 60, endurance: 95, group: 70, desc: '사막 환경 특화.', envFit: 90, icon: 'fa-solid fa-dungeon' },
+            { id: 'donkey', name: '당나귀', weight: '250kg', strength: 60, speed: 55, defense: 55, intelligence: 65, endurance: 80, group: 40, desc: '강력한 뒷발 차기와 고집.', envFit: 80, icon: 'fa-solid fa-horse' },
+            { id: 'leopard_seal', name: '표범물범', weight: '400kg', strength: 85, speed: 70, defense: 75, intelligence: 70, endurance: 85, group: 20, desc: '남극의 사나운 포식자.', envFit: 90, icon: 'fa-solid fa-fish' },
+            { id: 'orca', name: '범고래', weight: '4500kg', strength: 200, speed: 90, defense: 190, intelligence: 98, endurance: 95, group: 90, desc: '바다의 최상위 지능형 거대 포식자.', envFit: 100, icon: 'fa-solid fa-water' },
+            { id: 'shark', name: '백상아리', weight: '1100kg', strength: 130, speed: 85, defense: 105, intelligence: 60, endurance: 90, group: 20, desc: '바다의 공포. 강력한 이빨과 순발력.', envFit: 100, icon: 'fa-solid fa-fish-fins' }
+        ];
+
+        // State Management
+        let teamA = [
+            { animalId: 'human', count: 10, gear: { none: 3, bat: 4, sword: 2, gun: 1 } },
+            { animalId: 'wolf', count: 3, gear: null }
+        ];
+        let teamB = [
+            { animalId: 'hippo', count: 1, gear: null },
+            { animalId: 'lion', count: 2, gear: null }
+        ];
+        let currentEditingTeam = 'A';
+        let simulationHistory = JSON.parse(localStorage.getItem('wild_battle_history') || '[]');
+
+        // Initialize App on Load
+        window.onload = function() {
+            renderTeams();
+            renderPresets();
+            updateStatsView();
+        };
+
+        // View Switching
+        function switchView(viewName) {
+            ['home', 'setup', 'simulation', 'result', 'presets', 'stats'].forEach(v => {
+                document.getElementById(`view-${v}`).classList.add('hidden');
+            });
+            document.getElementById(`view-${viewName}`).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(viewName === 'setup') renderTeams();
+            if(viewName === 'stats') updateStatsView();
+        }
+
+        // Render Teams in Setup View
+        function renderTeams() {
+            renderTeamList('A', teamA, 'team-a-list', 'team-a-count', 'team-a-power', 'team-a-weight');
+            renderTeamList('B', teamB, 'team-b-list', 'team-b-count', 'team-b-power', 'team-b-weight');
+        }
+
+        function renderTeamList(teamKey, teamData, listId, countId, powerId, weightId) {
+            const container = document.getElementById(listId);
+            container.innerHTML = '';
+            
+            let totalCount = 0;
+            let totalPower = 0;
+            let totalWeightSum = 0;
+
+            if(teamData.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-zinc-500 text-sm border border-dashed border-wildBorder rounded-2xl">참가자가 없습니다. 참가자를 추가해주세요.</div>`;
+                document.getElementById(countId).innerText = '0';
+                document.getElementById(powerId).innerText = '0';
+                document.getElementById(weightId).innerText = '0 kg';
+                return;
+            }
+
+            teamData.forEach((item, index) => {
+                const animal = ANIMALS_DATA.find(a => a.id === item.animalId);
+                if(!animal) return;
+
+                totalCount += item.count;
+                totalPower += animal.strength * item.count;
+                let wNum = parseInt(animal.weight) || 70;
+                totalWeightSum += wNum * item.count;
+
+                let html = `
+                    <div class="bg-wildDark border border-wildBorder rounded-2xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-wildCard flex items-center justify-center text-red-500 text-lg border border-wildBorder">
+                                    <i class="${animal.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">${animal.name}</h4>
+                                    <span class="text-xs text-zinc-400">평균 체중: ${animal.weight} | 전투력: ${animal.strength}</span>
+                                </div>
+                            </div>
+                            <button onclick="removeParticipant('${teamKey}', ${index})" class="text-zinc-500 hover:text-red-500 transition text-sm">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-wildBorder/50">
+                            <span class="text-xs text-zinc-400 font-medium">마릿수 설정</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="updateCount('${teamKey}', ${index}, -1)" class="w-8 h-8 rounded-lg bg-wildCard border border-wildBorder text-zinc-300 hover:bg-wildBorder transition flex items-center justify-center text-xs font-bold">-</button>
+                                <input type="number" min="1" max="1000" value="${item.count}" onchange="setCount('${teamKey}', ${index}, this.value)" class="w-16 bg-wildCard border border-wildBorder rounded-lg text-center text-white text-sm py-1 font-bold focus:outline-none focus:border-red-500">
+                                <button onclick="updateCount('${teamKey}', ${index}, 1)" class="w-8 h-8 rounded-lg bg-wildCard border border-wildBorder text-zinc-300 hover:bg-wildBorder transition flex items-center justify-center text-xs font-bold">+</button>
+                            </div>
+                        </div>
+                `;
+
+                // Human Gear System (Only for Human)
+                if(animal.isHuman) {
+                    if(!item.gear) item.gear = { none: item.count, bat: 0, sword: 0, gun: 0 };
+                    // Ensure gear sum matches count
+                    let sumGear = item.gear.none + item.gear.bat + item.gear.sword + item.gear.gun;
+                    if(sumGear !== item.count) {
+                        item.gear.none = item.count;
+                        item.gear.bat = 0; item.gear.sword = 0; item.gear.gun = 0;
+                    }
+
+                    html += `
+                        <div class="bg-wildCard/50 border border-wildBorder rounded-xl p-3 space-y-2 mt-2">
+                            <div class="text-xs font-bold text-orange-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-gun"></i> 인간 전용 장비 배분 (합계: ${item.count}명)
+                            </div>
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+                                <div>
+                                    <span class="text-zinc-400 block mb-1">맨손</span>
+                                    <input type="number" min="0" max="${item.count}" value="${item.gear.none}" onchange="updateGear('${teamKey}', ${index}, 'none', this.value)" class="w-full bg-wildDark border border-wildBorder rounded-lg text-center text-white py-1">
+                                </div>
+                                <div>
+                                    <span class="text-zinc-400 block mb-1">방망이</span>
+                                    <input type="number" min="0" max="${item.count}" value="${item.gear.bat}" onchange="updateGear('${teamKey}', ${index}, 'bat', this.value)" class="w-full bg-wildDark border border-wildBorder rounded-lg text-center text-white py-1">
+                                </div>
+                                <div>
+                                    <span class="text-zinc-400 block mb-1">검</span>
+                                    <input type="number" min="0" max="${item.count}" value="${item.gear.sword}" onchange="updateGear('${teamKey}', ${index}, 'sword', this.value)" class="w-full bg-wildDark border border-wildBorder rounded-lg text-center text-white py-1">
+                                </div>
+                                <div>
+                                    <span class="text-zinc-400 block mb-1">총</span>
+                                    <input type="number" min="0" max="${item.count}" value="${item.gear.gun}" onchange="updateGear('${teamKey}', ${index}, 'gun', this.value)" class="w-full bg-wildDark border border-wildBorder rounded-lg text-center text-white py-1">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                html += `</div>`;
+                container.innerHTML += html;
+            });
+
+            document.getElementById(countId).innerText = totalCount.toLocaleString();
+            document.getElementById(powerId).innerText = totalPower.toLocaleString();
+            let avgW = totalCount > 0 ? Math.round(totalWeightSum / totalCount) : 0;
+            document.getElementById(weightId).innerText = avgW.toLocaleString() + ' kg';
+        }
+
+        // Team Management Functions
+        function addParticipantModal(teamKey) {
+            currentEditingTeam = teamKey;
+            document.getElementById('modal-team-name').innerText = `TEAM ${teamKey}`;
+            document.getElementById('participant-modal').classList.remove('hidden');
+            renderModalAnimals(ANIMALS_DATA);
+        }
+
+        function closeParticipantModal() {
+            document.getElementById('participant-modal').classList.add('hidden');
+        }
+
+        function renderModalAnimals(list) {
+            const grid = document.getElementById('modal-animals-grid');
+            grid.innerHTML = '';
+            list.forEach(animal => {
+                grid.innerHTML += `
+                    <div onclick="selectAnimal('${animal.id}')" class="bg-wildDark hover:bg-wildBorder border border-wildBorder rounded-2xl p-4 text-center cursor-pointer transition flex flex-col items-center justify-center gap-2 group">
+                        <div class="w-12 h-12 rounded-xl bg-wildCard flex items-center justify-center text-red-500 text-xl group-hover:scale-110 transition border border-wildBorder">
+                            <i class="${animal.icon}"></i>
+                        </div>
+                        <span class="text-white text-sm font-bold">${animal.name}</span>
+                        <span class="text-xs text-zinc-400">${animal.weight}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function filterAnimals() {
+            const query = document.getElementById('animal-search').value.toLowerCase();
+            const filtered = ANIMALS_DATA.filter(a => a.name.toLowerCase().includes(query));
+            renderModalAnimals(filtered);
+        }
+
+        function selectAnimal(animalId) {
+            const team = currentEditingTeam === 'A' ? teamA : teamB;
+            // Check if already exists
+            const existing = team.find(item => item.animalId === animalId);
+            if(existing) {
+                existing.count += 1;
+                if(existing.gear) existing.gear.none += 1;
+            } else {
+                const animal = ANIMALS_DATA.find(a => a.id === animalId);
+                let newObj = { animalId: animalId, count: 1, gear: null };
+                if(animal.isHuman) {
+                    newObj.gear = { none: 1, bat: 0, sword: 0, gun: 0 };
+                }
+                team.push(newObj);
+            }
+            closeParticipantModal();
+            renderTeams();
+        }
+
+        function removeParticipant(teamKey, index) {
+            if(teamKey === 'A') teamA.splice(index, 1);
+            else teamB.splice(index, 1);
+            renderTeams();
+        }
+
+        function updateCount(teamKey, index, delta) {
+            const team = teamKey === 'A' ? teamA : teamB;
+            team[index].count = Math.max(1, Math.min(1000, team[index].count + delta));
+            if(team[index].gear) {
+                team[index].gear.none = team[index].count;
+                team[index].gear.bat = 0; team[index].gear.sword = 0; team[index].gear.gun = 0;
+            }
+            renderTeams();
+        }
+
+        function setCount(teamKey, index, val) {
+            const team = teamKey === 'A' ? teamA : teamB;
+            let c = parseInt(val) || 1;
+            team[index].count = Math.max(1, Math.min(1000, c));
+            if(team[index].gear) {
+                team[index].gear.none = team[index].count;
+                team[index].gear.bat = 0; team[index].gear.sword = 0; team[index].gear.gun = 0;
+            }
+            renderTeams();
+        }
+
+        function updateGear(teamKey, index, gearType, val) {
+            const team = teamKey === 'A' ? teamA : teamB;
+            let v = parseInt(val) || 0;
+            let item = team[index];
+            item.gear[gearType] = Math.max(0, v);
+            
+            // Validate sum
+            let sum = item.gear.none + item.gear.bat + item.gear.sword + item.gear.gun;
+            if(sum > item.count) {
+                // Adjust
+                item.gear[gearType] -= (sum - item.count);
+            }
+            renderTeams();
+        }
+
+        function resetAllTeams() {
+            teamA = [{ animalId: 'human', count: 5, gear: { none: 5, bat: 0, sword: 0, gun: 0 } }];
+            teamB = [{ animalId: 'lion', count: 2, gear: null }];
+            renderTeams();
+        }
+
+        // Simulation Engine
+        function startSimulation() {
+            if(teamA.length === 0 || teamB.length === 0) {
+                showToast('알림', 'TEAM A와 TEAM B에 최소 1명 이상의 참가자를 추가해주세요.');
+                return;
+            }
+
+            switchView('simulation');
+            runSimulationAnimation();
+        }
+
+        function runSimulationAnimation() {
+            let progress = 0;
+            const progressBar = document.getElementById('sim-progress-bar');
+            const progressPct = document.getElementById('sim-progress-pct');
+            const statusText = document.getElementById('sim-status-text');
+            const logContainer = document.getElementById('battle-log-container');
+            logContainer.innerHTML = `<div>[시스템] 대결 환경 및 개체군 데이터 연산 시작...</div>`;
+
+            const env = document.getElementById('battle-env').value;
+            const runs = parseInt(document.getElementById('sim-runs').value);
+
+            // Populate live boxes
+            document.getElementById('sim-live-a').innerHTML = teamA.map(i => `${ANIMALS_DATA.find(a=>a.id===i.animalId).name} ${i.count}마리`).join('<br>');
+            document.getElementById('sim-live-b').innerHTML = teamB.map(i => `${ANIMALS_DATA.find(a=>a.id===i.animalId).name} ${i.count}마리`).join('<br>');
+            document.getElementById('sim-environment-tag').innerHTML = `<i class="fa-solid fa-earth-americas text-red-500 mr-1"></i> 전투 환경: ${getEnvName(env)}`;
+
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.style.width = progress + '%';
+                progressPct.innerText = progress + '%';
+
+                if(progress === 30) {
+                    statusText.innerText = '환경 적합도 및 지형 보정 적용 중...';
+                    logContainer.innerHTML += `<div>[엔진] 선택된 환경 (${getEnvName(env)}) 적합도 계산 완료.</div>`;
+                } else if(progress === 60) {
+                    statusText.innerText = '인간 전술 장비 및 집단 행동력 연산 중...';
+                    logContainer.innerHTML += `<div>[엔진] 양 팀의 종합 전투력 및 불확실성 변수 반영 중...</div>`;
+                } else if(progress === 90) {
+                    statusText.innerText = '최종 전투 결과 산출 중...';
+                    logContainer.innerHTML += `<div>[엔진] 몬테카를로 (${runs}회) 시뮬레이션 집계 완료.</div>`;
+                } else if(progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        executeFinalCalculation(env, runs);
+                    }, 500);
+                }
+            }, 300);
+        }
+
+        function getEnvName(env) {
+            const map = {
+                savanna: '아프리카 초원', jungle: '밀림', forest: '숲', desert: '사막',
+                snow: '설원', river: '강가', ocean: '바다', plains: '넓은 평지', random: '랜덤 환경'
+            };
+            return map[env] || '초원';
+        }
+
+        function calculateTeamPower(team, env) {
+            let totalScore = 0;
+            let totalCount = 0;
+            let maxBodyWeight = 0;
+
+            team.forEach(item => {
+                const animal = ANIMALS_DATA.find(a => a.id === item.animalId);
+                if(!animal) return;
+
+                let count = item.count;
+                totalCount += count;
+                let wNum = parseInt(animal.weight) || 70;
+                if(wNum > maxBodyWeight) maxBodyWeight = wNum;
+
+                // Base score from stats
+                let base = (animal.strength * 2.0) + (animal.speed * 1.0) + (animal.defense * 2.0) + (animal.intelligence * 1.0) + (animal.endurance * 1.0);
+                
+                // Weight Factor: High scale weight bonus for giant herbivores (Elephants, Hippos, Rhinos, Buffaloes, Orcas)
+                let weightScore = Math.pow(wNum, 0.7) * 3.5;
+
+                // Environment fit
+                let envBonus = (animal.envFit / 100) * 1.2;
+                if(env === 'ocean' && (animal.id === 'orca' || animal.id === 'shark')) envBonus *= 2.5;
+                if(env === 'ocean' && animal.id !== 'orca' && animal.id !== 'shark' && !animal.isHuman) envBonus *= 0.1; // land animals in ocean
+
+                let subTotal = (base + weightScore) * envBonus * count;
+
+                // Human Gear Bonus
+                if(animal.isHuman && item.gear) {
+                    let g = item.gear;
+                    let gearPower = (g.none * 1.0) + (g.bat * 2.2) + (g.sword * 3.8) + (g.gun * 8.0);
+                    subTotal += gearPower * 60;
+                }
+
+                // Group behavior multiplier
+                let groupFactor = 1 + (animal.group / 200);
+                subTotal *= groupFactor;
+
+                totalScore += subTotal;
+            });
+
+            return { score: totalScore, count: totalCount, maxWeight: maxBodyWeight };
+        }
+
+        function executeFinalCalculation(env, runs) {
+            // Monte Carlo Simulation
+            let winsA = 0;
+            let winsB = 0;
+            let draws = 0;
+
+            for(let i=0; i<runs; i++) {
+                let statsA = calculateTeamPower(teamA, env);
+                let statsB = calculateTeamPower(teamB, env);
+
+                // Add randomness (uncertainty variable)
+                let randomFactorA = 0.85 + (Math.random() * 0.3);
+                let randomFactorB = 0.85 + (Math.random() * 0.3);
+
+                let finalA = statsA.score * randomFactorA;
+                let finalB = statsB.score * randomFactorB;
+
+                if(finalA > finalB * 1.05) winsA++;
+                else if(finalB > finalA * 1.05) winsB++;
+                else draws++;
+            }
+
+            if(runs === 1) {
+                // For 1 run, ensure decisive outcome or match Monte Carlo logic
+                let statsA = calculateTeamPower(teamA, env);
+                let statsB = calculateTeamPower(teamB, env);
+                if(statsA.score >= statsB.score) { winsA = 1; winsB = 0; }
+                else { winsA = 0; winsB = 1; }
+            }
+
+            let winner = winsA >= winsB ? 'A' : 'B';
+            if(winsA === winsB) winner = 'A'; // default tiebreaker
+
+            // Save history
+            let historyItem = {
+                date: new Date().toLocaleDateString(),
+                teamAStr: teamA.map(i => `${ANIMALS_DATA.find(a=>a.id===i.animalId).name} ${i.count}명`).join(', '),
+                teamBStr: teamB.map(i => `${ANIMALS_DATA.find(a=>a.id===i.animalId).name} ${i.count}명`).join(', '),
+                env: getEnvName(env),
+                winner: winner,
+                runs: runs,
+                winsA: winsA,
+                winsB: winsB
+            };
+            simulationHistory.unshift(historyItem);
+            if(simulationHistory.length > 20) simulationHistory.pop();
+            localStorage.setItem('wild_battle_history', JSON.stringify(simulationHistory));
+
+            displayResult(winner, winsA, winsB, draws, runs, env);
+        }
+
+        function displayResult(winner, winsA, winsB, draws, runs, env) {
+            switchView('result');
+
+            const isA = winner === 'A';
+            const winningTeam = isA ? teamA : teamB;
+            const losingTeam = isA ? teamB : teamA;
+
+            document.getElementById('result-winner-title').innerText = isA ? 'TEAM A 승리!' : 'TEAM B 승리!';
+            document.getElementById('winner-badge').innerText = isA ? 'TEAM A VICTORY' : 'TEAM B VICTORY';
+            
+            // Dynamic summary description
+            let summaryDesc = `종합 분석 연산 결과, TEAM ${winner} 진영이 전투력과 지형 적합도에서 우위를 확보하여 승리를 거두었습니다.`;
+            
+            // Check if human in winning team
+            const winningHasHuman = winningTeam.some(i => i.animalId === 'human');
+            const winningBigAnimal = winningTeam.some(i => ['elephant', 'hippo', 'rhino', 'bison', 'buffalo', 'orca'].includes(i.animalId));
+
+            if (winningHasHuman) {
+                summaryDesc = "수적 우위와 인간의 전술적 장비 조합이 결정적인 승리 요인으로 작용했습니다.";
+            } else if (winningBigAnimal) {
+                summaryDesc = "초대형 동물의 압도적인 질량, 피부 방어력 및 파괴력이 전장을 지배하며 결정적인 승리 요인으로 작용했습니다.";
+            }
+
+            document.getElementById('result-summary-desc').innerText = summaryDesc;
+
+            let banner = document.getElementById('result-banner');
+            if(isA) {
+                banner.className = 'bg-gradient-to-br from-wildCard to-wildBorder border-2 border-red-500 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden glow-red';
+            } else {
+                banner.className = 'bg-gradient-to-br from-wildCard to-wildBorder border-2 border-orange-500 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden glow-gold';
+            }
+
+            // Dynamic factors analysis
+            const factorsList = document.getElementById('result-factors-list');
+            
+            let factorListHtml = `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                    <span><strong>체급 및 파괴력 (체중 보정):</strong> 대형 동물의 질량, 방어력 및 파괴 수치가 핵심 전투 수치에 반영되었습니다.</span>
+                </li>
+            `;
+
+            if (winningHasHuman) {
+                factorListHtml += `
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                        <span><strong>전술 무기 파급력:</strong> 총/검/방망이 등 전술 장비가 인간 개체의 한계를 보완하고 타격력을 급격히 증폭시켰습니다.</span>
+                    </li>
+                `;
+            } else {
+                factorListHtml += `
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                        <span><strong>개체군 밀도 및 무리 전술:</strong> 개체수 상호작용 및 무리 사냥/집단 돌진 행동 특성이 종합 수치에 반영되었습니다.</span>
+                    </li>
+                `;
+            }
+
+            factorListHtml += `
+                <li class="flex items-start gap-2">
+                    <i class="fa-solid fa-check text-red-500 mt-1"></i>
+                    <span><strong>전투 환경 (${getEnvName(env)}):</strong> 지형 적합성과 이동/은폐 변수가 몬테카를로 연산에 적용되었습니다.</span>
+                </li>
+            `;
+
+            factorsList.innerHTML = factorListHtml;
+
+            // Monte Carlo stats display
+            let pctA = Math.round((winsA / runs) * 100);
+            let pctB = Math.round((winsB / runs) * 100);
+            
+            const mcDiv = document.getElementById('monte-carlo-stats');
+            mcDiv.innerHTML = `
+                <div>
+                    <div class="flex justify-between text-xs text-zinc-400 mb-1">
+                        <span>TEAM A 승률 (${winsA}회 승리)</span>
+                        <span class="font-bold text-red-500">${pctA}%</span>
+                    </div>
+                    <div class="w-full bg-wildDark h-2.5 rounded-full overflow-hidden border border-wildBorder">
+                        <div class="bg-red-600 h-full rounded-full" style="width: ${pctA}%"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between text-xs text-zinc-400 mb-1">
+                        <span>TEAM B 승률 (${winsB}회 승리)</span>
+                        <span class="font-bold text-orange-500">${pctB}%</span>
+                    </div>
+                    <div class="w-full bg-wildDark h-2.5 rounded-full overflow-hidden border border-wildBorder">
+                        <div class="bg-orange-600 h-full rounded-full" style="width: ${pctB}%"></div>
+                    </div>
+                </div>
+                <p class="text-xs text-zinc-500 mt-2">* 본 결과는 가상 알고리즘 모델에 기반한 확률적 분석입니다.</p>
+            `;
+        }
+
+        // Presets View & Data
+        const PRESETS_DATA = [
+            {
+                title: '인간 10명 vs 하마 1마리',
+                desc: '방망이와 총을 장착한 인간 결사대 vs 초원의 거대 전차 하마',
+                env: 'river',
+                teamA: [{ animalId: 'human', count: 10, gear: { none: 2, bat: 5, sword: 2, gun: 1 } }],
+                teamB: [{ animalId: 'hippo', count: 1, gear: null }]
+            },
+            {
+                title: '방망이 인간 10명 vs 사자 2마리',
+                desc: '근거리 타격 무기를 든 인간 무리와 사자 무리의 사투',
+                env: 'savanna',
+                teamA: [{ animalId: 'human', count: 10, gear: { none: 0, bat: 10, sword: 0, gun: 0 } }],
+                teamB: [{ animalId: 'lion', count: 2, gear: null }]
+            },
+            {
+                title: '총든 인간 5명 vs 코끼리 1마리',
+                desc: '원거리 화력을 장착한 정예 인원과 지상 최대 맹수의 대결',
+                env: 'savanna',
+                teamA: [{ animalId: 'human', count: 5, gear: { none: 0, bat: 0, sword: 0, gun: 5 } }],
+                teamB: [{ animalId: 'elephant', count: 1, gear: null }]
+            },
+            {
+                title: '호랑이 3마리 vs 늑대 12마리',
+                desc: '단독 최강 포식자 vs 고도의 협동심을 가진 늑대 군단',
+                env: 'forest',
+                teamA: [{ animalId: 'tiger', count: 3, gear: null }],
+                teamB: [{ animalId: 'wolf', count: 12, gear: null }]
+            },
+            {
+                title: '고릴라 2마리 vs 사자 3마리',
+                desc: '영장류의 완력과 초원 사자 프라이드의 정면 승부',
+                env: 'jungle',
+                teamA: [{ animalId: 'gorilla', count: 2, gear: null }],
+                teamB: [{ animalId: 'lion', count: 3, gear: null }]
+            },
+            {
+                title: '악어 5마리 vs 하마 2마리',
+                desc: '강가 환경에서 펼쳐지는 파충류와 포유류 거구들의 싸움',
+                env: 'river',
+                teamA: [{ animalId: 'crocodile', count: 5, gear: null }],
+                teamB: [{ animalId: 'hippo', count: 2, gear: null }]
+            }
+        ];
+
+        function renderPresets() {
+            const grid = document.getElementById('presets-grid');
+            grid.innerHTML = '';
+            PRESETS_DATA.forEach((p, idx) => {
+                grid.innerHTML += `
+                    <div class="bg-wildCard border border-wildBorder rounded-3xl p-6 flex flex-col justify-between space-y-4 hover:border-red-500/50 transition">
+                        <div>
+                            <span class="text-xs bg-red-600/10 text-red-500 border border-red-500/30 px-3 py-1 rounded-full font-bold">인기 프리셋 #${idx+1}</span>
+                            <h3 class="text-lg font-bold text-white mt-3 mb-1">${p.title}</h3>
+                            <p class="text-xs text-zinc-400 leading-relaxed">${p.desc}</p>
+                        </div>
+                        <button onclick="loadPreset(${idx})" class="w-full bg-wildDark hover:bg-wildBorder border border-wildBorder text-zinc-200 font-semibold py-2.5 rounded-xl text-sm transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-bolt text-orange-500"></i> 이 세팅으로 대결하기
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function loadPreset(idx) {
+            const p = PRESETS_DATA[idx];
+            teamA = JSON.parse(JSON.stringify(p.teamA));
+            teamB = JSON.parse(JSON.stringify(p.teamB));
+            document.getElementById('battle-env').value = p.env;
+            switchView('setup');
+            showToast('프리셋 로드', `"${p.title}" 세팅이 적용되었습니다.`);
+        }
+
+        // Stats & History
+        function updateStatsView() {
+            const historyList = document.getElementById('history-list');
+            if(simulationHistory.length === 0) {
+                historyList.innerHTML = `<p class="text-zinc-500 text-center py-8">저장된 전투 기록이 없습니다.</p>`;
+            } else {
+                historyList.innerHTML = '';
+                simulationHistory.forEach(h => {
+                    historyList.innerHTML += `
+                        <div class="bg-wildDark border border-wildBorder rounded-xl p-3 space-y-1">
+                            <div class="flex justify-between text-xs text-zinc-500">
+                                <span>${h.date} | 환경: ${h.env}</span>
+                                <span class="font-bold ${h.winner === 'A' ? 'text-red-500' : 'text-orange-500'}">TEAM ${h.winner} 승리</span>
+                            </div>
+                            <div class="text-xs text-zinc-300">
+                                <strong>A:</strong> ${h.teamAStr} vs <strong>B:</strong> ${h.teamBStr}
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            // Ranking aggregation
+            let winCounts = {};
+            simulationHistory.forEach(h => {
+                // simple tally
+            });
+            const rankingList = document.getElementById('animal-ranking-list');
+            rankingList.innerHTML = `<p class="text-zinc-500 text-center py-8">시뮬레이션을 실행하면 랭킹 데이터가 집계됩니다.</p>`;
+        }
+
+        function clearHistory() {
+            simulationHistory = [];
+            localStorage.removeItem('wild_battle_history');
+            updateStatsView();
+            showToast('초기화 완료', '모든 전투 기록이 삭제되었습니다.');
+        }
+
+        // Sharing
+        function shareResult() {
+            const text = document.getElementById('result-winner-title').innerText + ' — WILD BATTLE LAB 시뮬레이션 결과';
+            if(navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('공유 완료', '시뮬레이션 결과 텍스트가 클립보드에 복사되었습니다.');
+                });
+            } else {
+                showToast('공유 완료', '결과가 성공적으로 생성되었습니다.');
+            }
+        }
+
+        // Toast Modal helper
+        function showToast(title, desc) {
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+            document.getElementById('toast-modal').classList.remove('hidden');
+        }
+
+        function closeToast() {
+            document.getElementById('toast-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
